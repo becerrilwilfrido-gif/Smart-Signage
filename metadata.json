@@ -1,0 +1,6 @@
+{
+  "name": "Corporate Welcome Signage",
+  "description": "Corporate digital signage screen layout with clock, weather, ticker, brand branding, and quotes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
