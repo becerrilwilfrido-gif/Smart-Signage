@@ -9,7 +9,8 @@ interface BrandWidgetProps {
 export default function BrandWidget({ }: BrandWidgetProps) {
   const images = [
     "https://i.imgur.com/ySks3l5.jpeg",
-    "https://i.imgur.com/aSkQKYQ.jpeg"
+    "https://i.imgur.com/aSkQKYQ.jpeg",
+    "https://i.imgur.com/bDg8eQn.jpeg"
   ];
   const [currentIndex, setCurrentIndex] = useState(0);
 
