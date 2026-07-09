@@ -2,22 +2,30 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 
 export default function InspirationWidget() {
-  const [quote, setQuote] = useState({ text: '', author: '' });
+  const [quote, setQuote] = useState({ text: 'La innovación distingue a los líderes de los seguidores.', author: 'Steve Jobs' });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchQuote = () => {
       fetch('/api/quote')
-        .then((res) => res.json())
-        .then((data) => setQuote(data))
-        .catch((err) => console.error('Error fetching quote:', err));
+        .then((res) => {
+          if (!res.ok) throw new Error('Failed to fetch');
+          return res.json();
+        })
+        .then((data) => {
+          setQuote(data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error('Error fetching quote, using fallback:', err);
+          setLoading(false);
+        });
     };
 
     fetchQuote();
-    const timer = setInterval(fetchQuote, 60000); // Fetch a new quote every minute
+    const timer = setInterval(fetchQuote, 30000);
     return () => clearInterval(timer);
   }, []);
-
-  if (!quote.text) return null;
 
   return (
     <div className="text-white h-full flex flex-col justify-center px-4">
