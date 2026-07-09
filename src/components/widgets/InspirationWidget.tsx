@@ -17,6 +17,8 @@ export default function InspirationWidget() {
     return () => clearInterval(timer);
   }, []);
 
+  if (!quote.text) return null;
+
   return (
     <div className="text-white h-full flex flex-col justify-center px-4">
       <AnimatePresence mode='wait'>

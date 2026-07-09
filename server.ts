@@ -23,9 +23,12 @@ async function startServer() {
   app.get("/api/quote", async (req, res) => {
     try {
       const response = await fetch("https://api.quotable.io/random");
+      if (!response.ok) throw new Error("Failed to fetch");
       const data = await response.json();
+      if (!data.content) throw new Error("Invalid data");
       res.json({ text: data.content, author: data.author });
     } catch (error) {
+      console.error("Quote fetch error:", error);
       res.json({ text: "La innovación distingue a los líderes de los seguidores.", author: "Steve Jobs" });
     }
   });
