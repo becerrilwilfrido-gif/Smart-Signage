@@ -21,16 +21,14 @@ async function startServer() {
 
   // API route for quote
   app.get("/api/quote", async (req, res) => {
-    try {
-      const response = await fetch("https://api.quotable.io/random");
-      if (!response.ok) throw new Error("Failed to fetch");
-      const data = await response.json();
-      if (!data.content) throw new Error("Invalid data");
-      res.json({ text: data.content, author: data.author });
-    } catch (error) {
-      console.error("Quote fetch error:", error);
-      res.json({ text: "La innovación distingue a los líderes de los seguidores.", author: "Steve Jobs" });
-    }
+    const quotes = [
+      { text: "La innovación distingue a los líderes de los seguidores.", author: "Steve Jobs" },
+      { text: "La creatividad es la inteligencia divirtiéndose.", author: "Albert Einstein" },
+      { text: "El único modo de hacer un gran trabajo es amar lo que haces.", author: "Steve Jobs" },
+      { text: "No cuentes los días, haz que los días cuenten.", author: "Muhammad Ali" }
+    ];
+    const randomIndex = Math.floor(Math.random() * quotes.length);
+    res.json(quotes[randomIndex]);
   });
 
   // Vite middleware for development
