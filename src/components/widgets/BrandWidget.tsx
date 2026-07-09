@@ -27,7 +27,7 @@ export default function BrandWidget({ }: BrandWidgetProps) {
           key={img}
           src={img}
           alt={`Brand ${index}`}
-          className={`absolute w-[80%] h-auto transition-opacity duration-1000 ease-in-out ${
+          className={`absolute w-full h-full object-contain p-4 transition-opacity duration-1000 ease-in-out ${
             index === currentIndex ? 'opacity-100' : 'opacity-0'
           }`}
         />
