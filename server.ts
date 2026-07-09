@@ -19,6 +19,17 @@ async function startServer() {
     res.json({ announcements });
   });
 
+  // API route for quote
+  app.get("/api/quote", async (req, res) => {
+    try {
+      const response = await fetch("https://api.quotable.io/random");
+      const data = await response.json();
+      res.json({ text: data.content, author: data.author });
+    } catch (error) {
+      res.json({ text: "La innovación distingue a los líderes de los seguidores.", author: "Steve Jobs" });
+    }
+  });
+
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({

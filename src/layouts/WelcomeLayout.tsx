@@ -2,7 +2,7 @@ import ClockWidget from '../components/widgets/ClockWidget';
 import WeatherWidget from '../components/widgets/WeatherWidget';
 import TickerWidget from '../components/widgets/TickerWidget';
 import BrandWidget from '../components/widgets/BrandWidget';
-import QuoteWidget from '../components/widgets/QuoteWidget';
+import InspirationWidget from '../components/widgets/InspirationWidget';
 
 interface WelcomeLayoutProps {
   brandName: string;
@@ -32,7 +32,7 @@ export default function WelcomeLayout({ brandName, slogan }: WelcomeLayoutProps)
         <div className="flex-1 flex items-center justify-around text-white p-4 text-sm">
         </div>
         <div className="w-1/3 border-l border-slate-700">
-          <QuoteWidget />
+          <InspirationWidget />
         </div>
       </div>
     </div>

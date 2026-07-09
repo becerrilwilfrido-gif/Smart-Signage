@@ -19,11 +19,19 @@ export default function WeatherWidget() {
     ]
   };
 
+  const getWeatherIcon = (desc: string, className: string) => {
+    const d = desc.toLowerCase();
+    if (d.includes('soleado')) return <Sun className={className} />;
+    if (d.includes('nublado')) return <CloudSun className={className} />;
+    if (d.includes('lluvia')) return <CloudRain className={className} />;
+    return <Cloud className={className} />;
+  };
+
   return (
     <div className="text-white space-y-6 flex flex-col items-center text-center">
       {/* Current Weather */}
       <div className="flex items-center gap-4">
-        <Sun className="w-16 h-16 text-yellow-400" />
+        {getWeatherIcon(weather.desc, "w-16 h-16 text-yellow-400")}
         <div>
           <div className="text-6xl font-bold">{weather.temp}°C</div>
           <div className="text-sm text-slate-300">{weather.desc}</div>
