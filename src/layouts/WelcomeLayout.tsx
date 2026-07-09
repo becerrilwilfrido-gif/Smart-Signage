@@ -15,7 +15,7 @@ export default function WelcomeLayout({ brandName, slogan }: WelcomeLayoutProps)
       {/* Main content */}
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <div className="w-[320px] bg-slate-900 p-6 flex flex-col justify-start gap-6 h-full border-r border-slate-700">
+        <div className="w-[320px] bg-slate-900 p-6 flex flex-col items-center justify-start gap-6 h-full border-r border-slate-700">
           <ClockWidget />
           <div className="border-t border-white/15 w-full"></div>
           <WeatherWidget />

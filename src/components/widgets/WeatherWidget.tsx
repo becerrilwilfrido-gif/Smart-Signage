@@ -20,7 +20,7 @@ export default function WeatherWidget() {
   };
 
   return (
-    <div className="text-white space-y-6">
+    <div className="text-white space-y-6 flex flex-col items-center text-center">
       {/* Current Weather */}
       <div className="flex items-center gap-4">
         <Sun className="w-16 h-16 text-yellow-400" />

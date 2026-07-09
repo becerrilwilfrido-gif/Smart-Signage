@@ -14,7 +14,7 @@ export default function ClockWidget() {
   const ampm = time.getHours() >= 12 ? 'PM' : 'AM';
 
   return (
-    <div className="text-white">
+    <div className="text-white flex flex-col items-center text-center">
       {/* Badge */}
       <div className="flex items-center gap-2 mb-4 bg-blue-950/50 px-3 py-1 rounded-full w-fit border border-blue-900">
         <div className="relative flex items-center justify-center">
