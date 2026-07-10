@@ -1,8 +1,10 @@
+import { useState, useEffect } from 'react';
 import ClockWidget from '../components/widgets/ClockWidget';
 import WeatherWidget from '../components/widgets/WeatherWidget';
 import TickerWidget from '../components/widgets/TickerWidget';
 import BrandWidget from '../components/widgets/BrandWidget';
 import InspirationWidget from '../components/widgets/InspirationWidget';
+import EmergencyAlertOverlay from '../components/EmergencyAlertOverlay';
 
 interface WelcomeLayoutProps {
   brandName: string;
@@ -10,8 +12,25 @@ interface WelcomeLayoutProps {
 }
 
 export default function WelcomeLayout({ brandName, slogan }: WelcomeLayoutProps) {
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'e' || event.key === 'E') {
+        setIsAlertOpen(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   return (
     <div className="aspect-video w-screen h-screen bg-white flex flex-col overflow-hidden">
+      <EmergencyAlertOverlay 
+        isOpen={isAlertOpen} 
+        onClose={() => setIsAlertOpen(false)}
+        message="¡Atención! Por favor, siga las instrucciones de seguridad."
+      />
       {/* Main content */}
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}

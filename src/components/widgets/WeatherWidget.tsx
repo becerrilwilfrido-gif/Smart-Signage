@@ -1,6 +1,25 @@
 import { Sun, Cloud, CloudRain, CloudSun, Droplets, Wind, SunDim, MapPin, Thermometer } from 'lucide-react';
 
 export default function WeatherWidget() {
+  const getWeatherIcon = (desc: string, className: string) => {
+    const d = desc.toLowerCase();
+    if (d.includes('soleado')) return <Sun className={className} />;
+    if (d.includes('nublado')) return <CloudSun className={className} />;
+    if (d.includes('lluvia')) return <CloudRain className={className} />;
+    return <Cloud className={className} />;
+  };
+
+  const days = ['DOM', 'LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB'];
+  const today = new Date().getDay();
+  
+  const forecastData = [
+    { max: 27, min: 19, icon: <CloudSun className="w-8 h-8 text-yellow-400" /> },
+    { max: 29, min: 20, icon: <Sun className="w-8 h-8 text-yellow-400" /> },
+    { max: 26, min: 18, icon: <Cloud className="w-8 h-8 text-gray-300" /> },
+    { max: 28, min: 19, icon: <CloudSun className="w-8 h-8 text-yellow-400" /> },
+    { max: 24, min: 17, icon: <CloudRain className="w-8 h-8 text-blue-300" /> },
+  ];
+
   const weather = {
     temp: 24,
     desc: 'Parcialmente nublado',
@@ -10,21 +29,10 @@ export default function WeatherWidget() {
     wind: 12,
     uv: 'Moderado',
     location: 'Ciudad de México',
-    forecast: [
-      { day: 'MIÉ', max: 27, min: 19, icon: <CloudSun className="w-8 h-8 text-yellow-400" /> },
-      { day: 'JUE', max: 29, min: 20, icon: <Sun className="w-8 h-8 text-yellow-400" /> },
-      { day: 'VIE', max: 26, min: 18, icon: <Cloud className="w-8 h-8 text-gray-300" /> },
-      { day: 'SÁB', max: 28, min: 19, icon: <CloudSun className="w-8 h-8 text-yellow-400" /> },
-      { day: 'DOM', max: 24, min: 17, icon: <CloudRain className="w-8 h-8 text-blue-300" /> },
-    ]
-  };
-
-  const getWeatherIcon = (desc: string, className: string) => {
-    const d = desc.toLowerCase();
-    if (d.includes('soleado')) return <Sun className={className} />;
-    if (d.includes('nublado')) return <CloudSun className={className} />;
-    if (d.includes('lluvia')) return <CloudRain className={className} />;
-    return <Cloud className={className} />;
+    forecast: forecastData.map((f, i) => ({
+      ...f,
+      day: days[(today + i + 1) % 7]
+    }))
   };
 
   return (
