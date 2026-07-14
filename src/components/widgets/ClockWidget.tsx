@@ -1,5 +1,22 @@
 import { useState, useEffect } from 'react';
-import { Radio } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+
+function FlipNumber({ value }: { value: string | number }) {
+  return (
+    <AnimatePresence mode='wait'>
+      <motion.span
+        key={value}
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: -20, opacity: 0 }}
+        transition={{ duration: 0.2 }}
+        className="inline-block"
+      >
+        {value}
+      </motion.span>
+    </AnimatePresence>
+  );
+}
 
 export default function ClockWidget() {
   const [time, setTime] = useState(new Date());
@@ -9,7 +26,7 @@ export default function ClockWidget() {
     return () => clearInterval(timer);
   }, []);
 
-  const hours = time.getHours() % 12 || 12;
+  const hours = (time.getHours() % 12 || 12).toString();
   const minutes = time.getMinutes().toString().padStart(2, '0');
   const ampm = time.getHours() >= 12 ? 'PM' : 'AM';
 
@@ -25,10 +42,10 @@ export default function ClockWidget() {
       </div>
 
       {/* Time */}
-      <div className="flex items-baseline gap-2">
-        <span className="text-6xl font-bold font-sans tracking-tighter">
-            {hours}:{minutes}
-        </span>
+      <div className="flex items-baseline gap-2 text-6xl font-bold font-sans tracking-tighter">
+        <FlipNumber value={hours} />
+        <span>:</span>
+        <FlipNumber value={minutes} />
         <span className="text-2xl font-medium">{ampm}</span>
       </div>
       

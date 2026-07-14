@@ -31,7 +31,7 @@ export default function WeatherWidget() {
     location: 'Ciudad de México',
     forecast: forecastData.map((f, i) => ({
       ...f,
-      day: days[(today + i + 1) % 7]
+      day: days[(today + i) % 7]
     }))
   };
 
