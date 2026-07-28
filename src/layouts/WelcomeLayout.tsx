@@ -40,7 +40,7 @@ export default function WelcomeLayout({ brandName, slogan }: WelcomeLayoutProps)
           <WeatherWidget />
         </div>
         {/* Brand */}
-        <div className="flex-1 flex items-center justify-center">
+        <div className="flex-1 relative h-full w-full overflow-hidden bg-white flex items-center justify-center">
           <BrandWidget brandName={brandName} slogan={slogan} />
         </div>
       </div>

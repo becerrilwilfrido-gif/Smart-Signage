@@ -1,6 +1,26 @@
+import { useState, useEffect } from 'react';
 import { Sun, Cloud, CloudRain, CloudSun, Droplets, Wind, SunDim, MapPin, Thermometer } from 'lucide-react';
 
+function WeatherSkeleton() {
+  return (
+    <div className="animate-pulse text-white space-y-6 flex flex-col items-center text-center">
+      <div className="w-24 h-24 bg-slate-700 rounded-full"></div>
+      <div className="space-y-2">
+        <div className="w-32 h-10 bg-slate-700 rounded"></div>
+        <div className="w-20 h-4 bg-slate-700 rounded mx-auto"></div>
+      </div>
+    </div>
+  );
+}
+
 export default function WeatherWidget() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
   const getWeatherIcon = (desc: string, className: string) => {
     const d = desc.toLowerCase();
     if (d.includes('soleado')) return <Sun className={className} />;
@@ -34,6 +54,8 @@ export default function WeatherWidget() {
       day: days[(today + i) % 7]
     }))
   };
+
+  if (loading) return <WeatherSkeleton />;
 
   return (
     <div className="text-white space-y-6 flex flex-col items-center text-center">
@@ -78,3 +100,4 @@ export default function WeatherWidget() {
     </div>
   );
 }
+
