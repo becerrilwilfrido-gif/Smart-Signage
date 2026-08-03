@@ -9,8 +9,8 @@ interface BrandWidgetProps {
 export default function BrandWidget({ }: BrandWidgetProps) {
   const mediaItems = [
     { url: "https://i.imgur.com/ySks3l5.jpeg", type: "image" },
-    { url: "https://i.imgur.com/aSkQKYQ.jpeg", type: "image" },
-    { url: "https://i.imgur.com/bDg8eQn.jpeg", type: "image" },
+    { url: "https://i.imgur.com/vRF0xt6.jpeg", type: "image" },
+    { url: "https://i.imgur.com/jFqOIyz.jpeg", type: "image" },
     { url: "https://i.imgur.com/SbYV58R.mp4", type: "video" }
   ];
   const [currentIndex, setCurrentIndex] = useState(0);
