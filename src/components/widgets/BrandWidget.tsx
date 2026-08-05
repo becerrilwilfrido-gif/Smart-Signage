@@ -12,7 +12,8 @@ export default function BrandWidget({ }: BrandWidgetProps) {
     { url: "https://i.imgur.com/vRF0xt6.jpeg", type: "image" },
     { url: "https://i.imgur.com/jFqOIyz.jpeg", type: "image" },
     { url: "https://i.imgur.com/SbYV58R.mp4", type: "video" },
-    { url: "https://i.imgur.com/CENcd2M.mp4", type: "video" }
+    { url: "https://i.imgur.com/CENcd2M.mp4", type: "video" },
+    { url: "https://i.imgur.com/0rI0Sl2.mp4", type: "video" }
   ];
   const [currentIndex, setCurrentIndex] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
