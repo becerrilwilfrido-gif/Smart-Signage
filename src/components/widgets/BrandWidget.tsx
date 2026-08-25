@@ -14,7 +14,7 @@ export default function BrandWidget({ }: BrandWidgetProps) {
     { url: "https://i.imgur.com/SbYV58R.mp4", type: "video" },
     { url: "https://i.imgur.com/CENcd2M.mp4", type: "video" },
     { url: "https://i.imgur.com/0rI0Sl2.mp4", type: "video" },
-    { url: "https://smartlearning.business/admin/ranking", type: "iframe", duration: 20000 }
+    { url: "https://smartlearning.business/public/ranking", type: "iframe", duration: 20000 }
   ];
   const [currentIndex, setCurrentIndex] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
