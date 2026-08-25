@@ -6,6 +6,59 @@ interface BrandWidgetProps {
   logoUrl?: string;
 }
 
+function ScaledIframe({ url, isCurrent }: { url: string; isCurrent: boolean }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+
+  const baseWidth = 1200;
+  const baseHeight = 980;
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const updateScale = () => {
+      if (!containerRef.current) return;
+      const { clientWidth, clientHeight } = containerRef.current;
+      if (clientWidth === 0 || clientHeight === 0) return;
+      
+      const scaleX = (clientWidth - 16) / baseWidth;
+      const scaleY = (clientHeight - 16) / baseHeight;
+      const fittedScale = Math.min(scaleX, scaleY);
+      setScale(fittedScale > 0 ? fittedScale : 1);
+    };
+
+    updateScale();
+    const observer = new ResizeObserver(updateScale);
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={containerRef}
+      className={`absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden bg-white transition-opacity duration-1000 ease-in-out ${
+        isCurrent ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+      }`}
+    >
+      <div
+        style={{
+          width: `${baseWidth}px`,
+          height: `${baseHeight}px`,
+          transform: `scale(${scale})`,
+          transformOrigin: 'center center',
+        }}
+        className="flex-shrink-0 flex items-center justify-center"
+      >
+        <iframe
+          src={url}
+          title="Ranking SmartLearning"
+          className="w-full h-full border-0 bg-white"
+          sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+        />
+      </div>
+    </div>
+  );
+}
+
 export default function BrandWidget({ }: BrandWidgetProps) {
   const mediaItems = [
     { url: "https://i.imgur.com/ySks3l5.jpeg", type: "image", duration: 8000 },
@@ -65,12 +118,10 @@ export default function BrandWidget({ }: BrandWidgetProps) {
 
         if (item.type === 'iframe') {
           return (
-            <iframe
+            <ScaledIframe
               key={item.url}
-              src={item.url}
-              title="Ranking SmartLearning"
-              className={`${commonClasses} border-0 bg-white`}
-              sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+              url={item.url}
+              isCurrent={isCurrent}
             />
           );
         }
