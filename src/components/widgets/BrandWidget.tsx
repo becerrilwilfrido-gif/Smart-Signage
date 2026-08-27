@@ -60,15 +60,23 @@ function ScaledIframe({ url, isCurrent }: { url: string; isCurrent: boolean }) {
 }
 
 export default function BrandWidget({ }: BrandWidgetProps) {
-  const mediaItems = [
-    { url: "https://i.imgur.com/ySks3l5.jpeg", type: "image", duration: 8000 },
-    { url: "https://i.imgur.com/vRF0xt6.jpeg", type: "image", duration: 8000 },
-    { url: "https://i.imgur.com/jFqOIyz.jpeg", type: "image", duration: 8000 },
-    { url: "https://i.imgur.com/SbYV58R.mp4", type: "video" },
-    { url: "https://i.imgur.com/CENcd2M.mp4", type: "video" },
-    { url: "https://i.imgur.com/0rI0Sl2.mp4", type: "video" },
-    { url: "https://smartlearning.business/public/ranking", type: "iframe", duration: 20000 }
+  const allMediaItems = [
+    { url: "https://i.imgur.com/ySks3l5.jpeg", type: "image" as const, duration: 8000 },
+    { url: "https://i.imgur.com/vRF0xt6.jpeg", type: "image" as const, duration: 8000 },
+    { url: "https://i.imgur.com/jFqOIyz.jpeg", type: "image" as const, duration: 8000 },
+    { url: "https://i.imgur.com/Gk24c7A.png", type: "image" as const, duration: 8000, allowedDays: [4] }, // 4 = Jueves (Thursday)
+    { url: "https://i.imgur.com/SbYV58R.mp4", type: "video" as const },
+    { url: "https://i.imgur.com/CENcd2M.mp4", type: "video" as const },
+    { url: "https://i.imgur.com/0rI0Sl2.mp4", type: "video" as const },
+    { url: "https://smartlearning.business/public/ranking", type: "iframe" as const, duration: 20000 }
   ];
+
+  // Filtrar contenidos según el día de la semana (0: Domingo, 1: Lunes, 2: Martes, 3: Miércoles, 4: Jueves, 5: Viernes, 6: Sábado)
+  const currentDayOfWeek = new Date().getDay();
+  const mediaItems = allMediaItems.filter(
+    (item) => !item.allowedDays || item.allowedDays.includes(currentDayOfWeek)
+  );
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -77,7 +85,13 @@ export default function BrandWidget({ }: BrandWidgetProps) {
   };
 
   useEffect(() => {
+    if (currentIndex >= mediaItems.length) {
+      setCurrentIndex(0);
+      return;
+    }
+
     const currentItem = mediaItems[currentIndex];
+    if (!currentItem) return;
 
     if (currentItem.type === 'image' || currentItem.type === 'iframe') {
       const duration = currentItem.duration || (currentItem.type === 'iframe' ? 20000 : 8000);
@@ -91,7 +105,7 @@ export default function BrandWidget({ }: BrandWidgetProps) {
         videoRef.current.play().catch(() => {});
       }
     }
-  }, [currentIndex]);
+  }, [currentIndex, mediaItems]);
 
   return (
     <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
