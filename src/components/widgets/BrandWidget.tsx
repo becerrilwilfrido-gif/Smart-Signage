@@ -64,6 +64,7 @@ export default function BrandWidget({ }: BrandWidgetProps) {
     { url: "https://i.imgur.com/ySks3l5.jpeg", type: "image" as const, duration: 8000 },
     { url: "https://i.imgur.com/vRF0xt6.jpeg", type: "image" as const, duration: 8000 },
     { url: "https://i.imgur.com/jFqOIyz.jpeg", type: "image" as const, duration: 8000 },
+    { url: "https://i.imgur.com/mn6bxkA.png", type: "image" as const, duration: 8000, allowedDays: [2] }, // 2 = Martes (Tuesday)
     { url: "https://i.imgur.com/Gk24c7A.png", type: "image" as const, duration: 8000, allowedDays: [4] }, // 4 = Jueves (Thursday)
     { url: "https://i.imgur.com/SbYV58R.mp4", type: "video" as const },
     { url: "https://i.imgur.com/CENcd2M.mp4", type: "video" as const },
