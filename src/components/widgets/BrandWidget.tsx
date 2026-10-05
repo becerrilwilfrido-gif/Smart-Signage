@@ -60,8 +60,15 @@ function ScaledIframe({ url, isCurrent }: { url: string; isCurrent: boolean }) {
 }
 
 export default function BrandWidget({ }: BrandWidgetProps) {
-  const allMediaItems = [
+  const allMediaItems: Array<{
+    url: string;
+    type: 'image' | 'video' | 'iframe';
+    duration?: number;
+    allowedDays?: number[];
+    exactDate?: string;
+  }> = [
     { url: "https://i.imgur.com/ySks3l5.jpeg", type: "image" as const, duration: 8000 },
+    { url: "https://i.imgur.com/DmKabUd.jpeg", type: "image" as const, duration: 8000, exactDate: "2026-10-05" }, // Solo 5 de Octubre
     { url: "https://i.imgur.com/GzPdH1r.png", type: "image" as const, duration: 8000, allowedDays: [1] }, // 1 = Lunes (Monday)
     { url: "https://i.imgur.com/mn6bxkA.png", type: "image" as const, duration: 8000, allowedDays: [2] }, // 2 = Martes (Tuesday)
     { url: "https://i.imgur.com/Gk24c7A.png", type: "image" as const, duration: 8000, allowedDays: [4] }, // 4 = Jueves (Thursday)
@@ -70,11 +77,28 @@ export default function BrandWidget({ }: BrandWidgetProps) {
     { url: "https://smartlearning.business/public/ranking", type: "iframe" as const, duration: 20000 }
   ];
 
-  // Filtrar contenidos según el día de la semana (0: Domingo, 1: Lunes, 2: Martes, 3: Miércoles, 4: Jueves, 5: Viernes, 6: Sábado)
-  const currentDayOfWeek = new Date().getDay();
-  const mediaItems = allMediaItems.filter(
-    (item) => !item.allowedDays || item.allowedDays.includes(currentDayOfWeek)
-  );
+  // Fecha y día actuales para programación dinámica
+  const now = new Date();
+  const currentDayOfWeek = now.getDay();
+  const yearStr = now.getFullYear();
+  const monthStr = String(now.getMonth() + 1).padStart(2, '0');
+  const dayStr = String(now.getDate()).padStart(2, '0');
+  const todayDateStr = `${yearStr}-${monthStr}-${dayStr}`;
+  const todayMonthDayStr = `${monthStr}-${dayStr}`;
+
+  const mediaItems = allMediaItems.filter((item) => {
+    // Si tiene fecha exacta especificada (ej. '2026-10-05' o '10-05'), solo se muestra en esa fecha
+    if (item.exactDate) {
+      if (item.exactDate !== todayDateStr && item.exactDate !== todayMonthDayStr) {
+        return false;
+      }
+    }
+    // Si tiene días de la semana especificados (0: Domingo, 1: Lunes, etc.)
+    if (item.allowedDays && !item.allowedDays.includes(currentDayOfWeek)) {
+      return false;
+    }
+    return true;
+  });
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
