@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import TrafficSlide from './TrafficSlide';
+import WeatherSlide from './WeatherSlide';
 
 interface BrandWidgetProps {
   brandName: string;
@@ -60,14 +61,10 @@ function ScaledIframe({ url, isCurrent }: { url: string; isCurrent: boolean; key
   );
 }
 
-function PdfSlide({ isCurrent }: { url: string; isCurrent: boolean; key?: string | number }) {
+function PdfSlide({ }: { url: string; isCurrent: boolean; key?: string | number }) {
   return (
-    <div
-      className={`absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden transition-opacity duration-1000 ease-in-out p-2 ${
-        isCurrent ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-      }`}
-    >
-      <div className="relative h-full aspect-[612/792] max-w-full max-h-full flex items-center justify-center bg-white rounded-lg shadow-xl overflow-hidden border border-slate-200">
+    <div className="w-full h-full flex items-center justify-center overflow-hidden bg-white p-3">
+      <div className="relative h-full aspect-[612/792] max-w-full max-h-full flex items-center justify-center bg-white rounded-xl shadow-lg overflow-hidden border border-slate-200">
         <img
           src="/media/cumpleanos_oct26.png"
           alt="Aviso Cumpleaños"
@@ -111,7 +108,7 @@ export default function BrandWidget({ }: BrandWidgetProps) {
 
   const allMediaItems: Array<{
     url: string;
-    type: 'image' | 'video' | 'iframe' | 'traffic' | 'pdf';
+    type: 'image' | 'video' | 'iframe' | 'traffic' | 'pdf' | 'weather';
     duration?: number;
     allowedDays?: number[];
     exactDate?: string;
@@ -126,6 +123,8 @@ export default function BrandWidget({ }: BrandWidgetProps) {
     ...(isTrafficActive ? [
       { url: "traffic-bosques-auditorio", type: "traffic" as const, duration: 45000 }
     ] : []),
+    // Pronóstico del día y radar meteorológico en tiempo real (CDMX - Bosques de las Lomas)
+    { url: "weather-bosques-cdmx", type: "weather" as const, duration: 25000 },
     { url: "https://files.constantcontact.com/b0467007601/479bc953-68be-4615-a6db-286892fe3e95.pdf", type: "pdf" as const, duration: 20000, validUntil: "2026-10-31" },
     { url: "https://i.imgur.com/CENcd2M.mp4", type: "video" as const },
     { url: "https://i.imgur.com/0rI0Sl2.mp4", type: "video" as const },
@@ -173,7 +172,7 @@ export default function BrandWidget({ }: BrandWidgetProps) {
     const currentItem = mediaItems[currentIndex];
     if (!currentItem) return;
 
-    if (currentItem.type === 'image' || currentItem.type === 'iframe' || currentItem.type === 'traffic' || currentItem.type === 'pdf') {
+    if (currentItem.type === 'image' || currentItem.type === 'iframe' || currentItem.type === 'traffic' || currentItem.type === 'pdf' || currentItem.type === 'weather') {
       const duration = currentItem.duration || (currentItem.type === 'image' ? 8000 : 20000);
       const timer = setTimeout(() => {
         handleNext();
@@ -189,26 +188,20 @@ export default function BrandWidget({ }: BrandWidgetProps) {
   }, [currentIndex, mediaItems.length]);
 
   return (
-    <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
+    <div className="relative w-full h-full flex items-center justify-center overflow-hidden bg-white">
       {mediaItems.map((item, index) => {
         const isCurrent = index === currentIndex;
-        const commonClasses = `absolute w-full h-full transition-opacity duration-1000 ease-in-out ${
-          isCurrent ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        const containerClasses = `absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${
+          isCurrent ? 'opacity-100 pointer-events-auto z-10 visible' : 'opacity-0 pointer-events-none z-0 invisible'
         }`;
 
-        if (item.type === 'traffic') {
-          return (
-            <TrafficSlide
-              key="traffic-bosques-auditorio"
-              isCurrent={isCurrent}
-            />
-          );
-        }
+        let slideElement = null;
 
-        if (item.type === 'video') {
-          return (
+        if (item.type === 'traffic') {
+          slideElement = <TrafficSlide isCurrent={isCurrent} />;
+        } else if (item.type === 'video') {
+          slideElement = (
             <video
-              key={item.url}
               src={item.url}
               muted
               playsInline
@@ -228,38 +221,29 @@ export default function BrandWidget({ }: BrandWidgetProps) {
                   }
                 }
               }}
-              className={`${commonClasses} object-contain`}
+              className="w-full h-full object-contain"
             />
           );
-        }
-
-        if (item.type === 'iframe') {
-          return (
-            <ScaledIframe
-              key={item.url}
-              url={item.url}
-              isCurrent={isCurrent}
-            />
-          );
-        }
-
-        if (item.type === 'pdf') {
-          return (
-            <PdfSlide
-              key={item.url}
-              url={item.url}
-              isCurrent={isCurrent}
+        } else if (item.type === 'iframe') {
+          slideElement = <ScaledIframe url={item.url} isCurrent={isCurrent} />;
+        } else if (item.type === 'pdf') {
+          slideElement = <PdfSlide url={item.url} isCurrent={isCurrent} />;
+        } else if (item.type === 'weather') {
+          slideElement = <WeatherSlide isCurrent={isCurrent} />;
+        } else {
+          slideElement = (
+            <img
+              src={item.url}
+              alt={`Brand ${index}`}
+              className="w-full h-full object-contain"
             />
           );
         }
 
         return (
-          <img
-            key={item.url}
-            src={item.url}
-            alt={`Brand ${index}`}
-            className={`${commonClasses} object-contain`}
-          />
+          <div key={item.url} className={containerClasses}>
+            {slideElement}
+          </div>
         );
       })}
     </div>
