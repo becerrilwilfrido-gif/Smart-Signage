@@ -1,3 +1,4 @@
+// Digital Signage Carousel Widget - v1.0.1 (Bosques de las Lomas weather slide + white background)
 import { useState, useEffect, useRef } from 'react';
 import TrafficSlide from './TrafficSlide';
 import WeatherSlide from './WeatherSlide';
