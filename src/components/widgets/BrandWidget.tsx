@@ -60,6 +60,25 @@ function ScaledIframe({ url, isCurrent }: { url: string; isCurrent: boolean; key
   );
 }
 
+function PdfSlide({ isCurrent }: { url: string; isCurrent: boolean; key?: string | number }) {
+  return (
+    <div
+      className={`absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden transition-opacity duration-1000 ease-in-out p-2 ${
+        isCurrent ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+      }`}
+    >
+      <div className="relative h-full aspect-[612/792] max-w-full max-h-full flex items-center justify-center bg-white rounded-lg shadow-xl overflow-hidden border border-slate-200">
+        <img
+          src="/media/cumpleanos_oct26.png"
+          alt="Aviso Cumpleaños"
+          className="w-full h-full object-contain bg-white"
+          loading="eager"
+        />
+      </div>
+    </div>
+  );
+}
+
 function checkIsTrafficSchedule(): boolean {
   const now = new Date();
   const day = now.getDay(); // 1 = Lunes, 2 = Martes, 3 = Miércoles, 4 = Jueves, 5 = Viernes
@@ -92,10 +111,11 @@ export default function BrandWidget({ }: BrandWidgetProps) {
 
   const allMediaItems: Array<{
     url: string;
-    type: 'image' | 'video' | 'iframe' | 'traffic';
+    type: 'image' | 'video' | 'iframe' | 'traffic' | 'pdf';
     duration?: number;
     allowedDays?: number[];
     exactDate?: string;
+    validUntil?: string;
   }> = [
     { url: "https://i.imgur.com/ySks3l5.jpeg", type: "image" as const, duration: 8000 },
     { url: "https://i.imgur.com/DmKabUd.jpeg", type: "image" as const, duration: 8000, exactDate: "2026-10-05" }, // Solo 5 de Octubre
@@ -106,6 +126,7 @@ export default function BrandWidget({ }: BrandWidgetProps) {
     ...(isTrafficActive ? [
       { url: "traffic-bosques-auditorio", type: "traffic" as const, duration: 45000 }
     ] : []),
+    { url: "https://files.constantcontact.com/b0467007601/479bc953-68be-4615-a6db-286892fe3e95.pdf", type: "pdf" as const, duration: 20000, validUntil: "2026-10-31" },
     { url: "https://i.imgur.com/CENcd2M.mp4", type: "video" as const },
     { url: "https://i.imgur.com/0rI0Sl2.mp4", type: "video" as const },
     { url: "https://smartlearning.business/public/ranking", type: "iframe" as const, duration: 20000 } // Ranking (20 seg)
@@ -115,6 +136,16 @@ export default function BrandWidget({ }: BrandWidgetProps) {
     // Si tiene fecha exacta especificada (ej. '2026-10-05' o '10-05')
     if (item.exactDate) {
       if (item.exactDate !== todayDateStr && item.exactDate !== todayMonthDayStr) {
+        return false;
+      }
+    }
+
+    // Si tiene fecha de vigencia límite (ej. hasta el 31 de Octubre inclusive)
+    if (item.validUntil) {
+      const isPastLimit = item.validUntil.length === 5
+        ? todayMonthDayStr > item.validUntil
+        : todayDateStr > item.validUntil;
+      if (isPastLimit) {
         return false;
       }
     }
@@ -142,7 +173,7 @@ export default function BrandWidget({ }: BrandWidgetProps) {
     const currentItem = mediaItems[currentIndex];
     if (!currentItem) return;
 
-    if (currentItem.type === 'image' || currentItem.type === 'iframe' || currentItem.type === 'traffic') {
+    if (currentItem.type === 'image' || currentItem.type === 'iframe' || currentItem.type === 'traffic' || currentItem.type === 'pdf') {
       const duration = currentItem.duration || (currentItem.type === 'image' ? 8000 : 20000);
       const timer = setTimeout(() => {
         handleNext();
@@ -205,6 +236,16 @@ export default function BrandWidget({ }: BrandWidgetProps) {
         if (item.type === 'iframe') {
           return (
             <ScaledIframe
+              key={item.url}
+              url={item.url}
+              isCurrent={isCurrent}
+            />
+          );
+        }
+
+        if (item.type === 'pdf') {
+          return (
+            <PdfSlide
               key={item.url}
               url={item.url}
               isCurrent={isCurrent}
