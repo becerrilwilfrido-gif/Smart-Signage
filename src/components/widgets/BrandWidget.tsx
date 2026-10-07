@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import TrafficSlide from './TrafficSlide';
 
 interface BrandWidgetProps {
   brandName: string;
@@ -6,7 +7,7 @@ interface BrandWidgetProps {
   logoUrl?: string;
 }
 
-function ScaledIframe({ url, isCurrent }: { url: string; isCurrent: boolean }) {
+function ScaledIframe({ url, isCurrent }: { url: string; isCurrent: boolean; key?: string | number }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
 
@@ -59,25 +60,28 @@ function ScaledIframe({ url, isCurrent }: { url: string; isCurrent: boolean }) {
   );
 }
 
-export default function BrandWidget({ }: BrandWidgetProps) {
-  const allMediaItems: Array<{
-    url: string;
-    type: 'image' | 'video' | 'iframe';
-    duration?: number;
-    allowedDays?: number[];
-    exactDate?: string;
-  }> = [
-    { url: "https://i.imgur.com/ySks3l5.jpeg", type: "image" as const, duration: 8000 },
-    { url: "https://i.imgur.com/DmKabUd.jpeg", type: "image" as const, duration: 8000, exactDate: "2026-10-05" }, // Solo 5 de Octubre
-    { url: "https://i.imgur.com/GzPdH1r.png", type: "image" as const, duration: 8000, allowedDays: [1] }, // 1 = Lunes (Monday)
-    { url: "https://i.imgur.com/mn6bxkA.png", type: "image" as const, duration: 8000, allowedDays: [2] }, // 2 = Martes (Tuesday)
-    { url: "https://i.imgur.com/Gk24c7A.png", type: "image" as const, duration: 8000, allowedDays: [4] }, // 4 = Jueves (Thursday)
-    { url: "https://i.imgur.com/CENcd2M.mp4", type: "video" as const },
-    { url: "https://i.imgur.com/0rI0Sl2.mp4", type: "video" as const },
-    { url: "https://smartlearning.business/public/ranking", type: "iframe" as const, duration: 20000 }
-  ];
+function checkIsTrafficSchedule(): boolean {
+  const now = new Date();
+  const day = now.getDay(); // 1 = Lunes, 2 = Martes, 3 = Miércoles, 4 = Jueves, 5 = Viernes
+  if (day < 1 || day > 5) return false;
+  const minutes = now.getHours() * 60 + now.getMinutes();
+  return minutes >= (17 * 60 + 30) && minutes < (18 * 60 + 30); // 17:30 a 18:30 (5:30 PM a 6:30 PM)
+}
 
-  // Fecha y día actuales para programación dinámica
+export default function BrandWidget({ }: BrandWidgetProps) {
+  const [isTrafficActive, setIsTrafficActive] = useState<boolean>(checkIsTrafficSchedule);
+
+  // Evaluar periódicamente si entra o sale de la ventana 17:30 - 18:30 de Lunes a Viernes
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setIsTrafficActive(prev => {
+        const next = checkIsTrafficSchedule();
+        return prev !== next ? next : prev;
+      });
+    }, 30000);
+    return () => clearInterval(timer);
+  }, []);
+
   const now = new Date();
   const currentDayOfWeek = now.getDay();
   const yearStr = now.getFullYear();
@@ -86,22 +90,44 @@ export default function BrandWidget({ }: BrandWidgetProps) {
   const todayDateStr = `${yearStr}-${monthStr}-${dayStr}`;
   const todayMonthDayStr = `${monthStr}-${dayStr}`;
 
+  const allMediaItems: Array<{
+    url: string;
+    type: 'image' | 'video' | 'iframe' | 'traffic';
+    duration?: number;
+    allowedDays?: number[];
+    exactDate?: string;
+  }> = [
+    { url: "https://i.imgur.com/ySks3l5.jpeg", type: "image" as const, duration: 8000 },
+    { url: "https://i.imgur.com/DmKabUd.jpeg", type: "image" as const, duration: 8000, exactDate: "2026-10-05" }, // Solo 5 de Octubre
+    { url: "https://i.imgur.com/GzPdH1r.png", type: "image" as const, duration: 8000, allowedDays: [1] }, // 1 = Lunes
+    { url: "https://i.imgur.com/mn6bxkA.png", type: "image" as const, duration: 8000, allowedDays: [2] }, // 2 = Martes
+    { url: "https://i.imgur.com/Gk24c7A.png", type: "image" as const, duration: 8000, allowedDays: [4] }, // 4 = Jueves
+    // Waze Tráfico: solo visible si está en horario (Lunes a Viernes de 5:30 PM a 6:30 PM)
+    ...(isTrafficActive ? [
+      { url: "traffic-bosques-auditorio", type: "traffic" as const, duration: 45000 }
+    ] : []),
+    { url: "https://i.imgur.com/CENcd2M.mp4", type: "video" as const },
+    { url: "https://i.imgur.com/0rI0Sl2.mp4", type: "video" as const },
+    { url: "https://smartlearning.business/public/ranking", type: "iframe" as const, duration: 20000 } // Ranking (20 seg)
+  ];
+
   const mediaItems = allMediaItems.filter((item) => {
-    // Si tiene fecha exacta especificada (ej. '2026-10-05' o '10-05'), solo se muestra en esa fecha
+    // Si tiene fecha exacta especificada (ej. '2026-10-05' o '10-05')
     if (item.exactDate) {
       if (item.exactDate !== todayDateStr && item.exactDate !== todayMonthDayStr) {
         return false;
       }
     }
+
     // Si tiene días de la semana especificados (0: Domingo, 1: Lunes, etc.)
     if (item.allowedDays && !item.allowedDays.includes(currentDayOfWeek)) {
       return false;
     }
+
     return true;
   });
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const videoRef = useRef<HTMLVideoElement>(null);
 
   const handleNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % mediaItems.length);
@@ -116,19 +142,20 @@ export default function BrandWidget({ }: BrandWidgetProps) {
     const currentItem = mediaItems[currentIndex];
     if (!currentItem) return;
 
-    if (currentItem.type === 'image' || currentItem.type === 'iframe') {
-      const duration = currentItem.duration || (currentItem.type === 'iframe' ? 20000 : 8000);
+    if (currentItem.type === 'image' || currentItem.type === 'iframe' || currentItem.type === 'traffic') {
+      const duration = currentItem.duration || (currentItem.type === 'image' ? 8000 : 20000);
       const timer = setTimeout(() => {
         handleNext();
       }, duration);
       return () => clearTimeout(timer);
     } else if (currentItem.type === 'video') {
-      if (videoRef.current) {
-        videoRef.current.currentTime = 0;
-        videoRef.current.play().catch(() => {});
-      }
+      // Temporizador de respaldo por si el video no dispara onEnded
+      const fallbackTimer = setTimeout(() => {
+        handleNext();
+      }, 45000);
+      return () => clearTimeout(fallbackTimer);
     }
-  }, [currentIndex, mediaItems]);
+  }, [currentIndex, mediaItems.length]);
 
   return (
     <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
@@ -138,16 +165,38 @@ export default function BrandWidget({ }: BrandWidgetProps) {
           isCurrent ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`;
 
+        if (item.type === 'traffic') {
+          return (
+            <TrafficSlide
+              key="traffic-bosques-auditorio"
+              isCurrent={isCurrent}
+            />
+          );
+        }
+
         if (item.type === 'video') {
           return (
             <video
               key={item.url}
-              ref={isCurrent ? videoRef : null}
               src={item.url}
-              autoPlay
               muted
               playsInline
-              onEnded={handleNext}
+              onEnded={() => {
+                if (isCurrent) {
+                  handleNext();
+                }
+              }}
+              ref={(el) => {
+                if (el) {
+                  if (isCurrent) {
+                    el.currentTime = 0;
+                    el.play().catch(() => {});
+                  } else {
+                    el.pause();
+                    el.currentTime = 0;
+                  }
+                }
+              }}
               className={`${commonClasses} object-contain`}
             />
           );

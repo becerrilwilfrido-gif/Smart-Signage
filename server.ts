@@ -6,12 +6,11 @@ async function startServer() {
   const app = express();
   const PORT = 3000;
 
-  // Mock announcement data
+  app.use(express.json());
+
+  // Announcement data
   const announcements = [
-    "Bienvenidos a nuestras instalaciones. Por favor, mantenga su gafete visible.",
-    "Recordatorio: La capacitación de seguridad será el día de mañana a las 10:00 AM.",
-    "Aviso: El servicio de cafetería estará cerrado por mantenimiento el próximo viernes.",
-    "Noticia importante: Nuevo proceso de entrada a partir del lunes."
+    "Bienvenido a BSD"
   ];
 
   // API route for ticker
