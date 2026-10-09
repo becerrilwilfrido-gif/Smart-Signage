@@ -1,4 +1,4 @@
-// Digital Signage Carousel Widget - v1.0.1 (Bosques de las Lomas weather slide + white background)
+// Digital Signage Carousel Widget - v1.0.2 (Added promotional images with 40s duration + Bosques weather & Waze traffic)
 import { useState, useEffect, useRef } from 'react';
 import TrafficSlide from './TrafficSlide';
 import WeatherSlide from './WeatherSlide';
@@ -101,7 +101,7 @@ export default function BrandWidget({ }: BrandWidgetProps) {
 
   const now = new Date();
   const currentDayOfWeek = now.getDay();
-  const yearStr = now.getFullYear();
+  const yearStr = String(now.getFullYear());
   const monthStr = String(now.getMonth() + 1).padStart(2, '0');
   const dayStr = String(now.getDate()).padStart(2, '0');
   const todayDateStr = `${yearStr}-${monthStr}-${dayStr}`;
@@ -114,6 +114,7 @@ export default function BrandWidget({ }: BrandWidgetProps) {
     allowedDays?: number[];
     exactDate?: string;
     validUntil?: string;
+    validFrom?: string;
   }> = [
     { url: "https://i.imgur.com/ySks3l5.jpeg", type: "image" as const, duration: 8000 },
     { url: "https://i.imgur.com/DmKabUd.jpeg", type: "image" as const, duration: 8000, exactDate: "2026-10-05" }, // Solo 5 de Octubre
@@ -127,6 +128,11 @@ export default function BrandWidget({ }: BrandWidgetProps) {
     // Pronóstico del día y radar meteorológico en tiempo real (CDMX - Bosques de las Lomas)
     { url: "weather-bosques-cdmx", type: "weather" as const, duration: 25000 },
     { url: "https://files.constantcontact.com/b0467007601/479bc953-68be-4615-a6db-286892fe3e95.pdf", type: "pdf" as const, duration: 20000, validUntil: "2026-10-31" },
+    // Nuevas imágenes solicitadas (40 seg cada una)
+    { url: "https://i.imgur.com/jSjzNEv.png", type: "image" as const, duration: 40000, validUntil: "2026-10-17" }, // Vigente desde hoy hasta el sábado 17 de Octubre inclusive
+    { url: "https://i.imgur.com/NfVRJeg.png", type: "image" as const, duration: 40000 },
+    { url: "https://i.imgur.com/V0Klwgq.png", type: "image" as const, duration: 40000 },
+    { url: "https://i.imgur.com/pxTKbxB.png", type: "image" as const, duration: 40000 },
     { url: "https://i.imgur.com/CENcd2M.mp4", type: "video" as const },
     { url: "https://i.imgur.com/0rI0Sl2.mp4", type: "video" as const },
     { url: "https://smartlearning.business/public/ranking", type: "iframe" as const, duration: 20000 } // Ranking (20 seg)
@@ -140,11 +146,39 @@ export default function BrandWidget({ }: BrandWidgetProps) {
       }
     }
 
-    // Si tiene fecha de vigencia límite (ej. hasta el 31 de Octubre inclusive)
+    // Si tiene fecha de inicio de vigencia (opcional)
+    if (item.validFrom) {
+      let isBeforeStart = false;
+      if (item.validFrom.length === 5) {
+        isBeforeStart = todayMonthDayStr < item.validFrom;
+      } else {
+        const itemYear = item.validFrom.substring(0, 4);
+        const itemMonthDay = item.validFrom.substring(5);
+        if (yearStr === itemYear) {
+          isBeforeStart = todayMonthDayStr < itemMonthDay;
+        } else {
+          isBeforeStart = todayDateStr < item.validFrom;
+        }
+      }
+      if (isBeforeStart) {
+        return false;
+      }
+    }
+
+    // Si tiene fecha de vigencia límite (ej. hasta el 17 o 31 de Octubre inclusive)
     if (item.validUntil) {
-      const isPastLimit = item.validUntil.length === 5
-        ? todayMonthDayStr > item.validUntil
-        : todayDateStr > item.validUntil;
+      let isPastLimit = false;
+      if (item.validUntil.length === 5) {
+        isPastLimit = todayMonthDayStr > item.validUntil;
+      } else {
+        const itemYear = item.validUntil.substring(0, 4);
+        const itemMonthDay = item.validUntil.substring(5);
+        if (yearStr === itemYear) {
+          isPastLimit = todayMonthDayStr > itemMonthDay;
+        } else {
+          isPastLimit = todayDateStr > item.validUntil;
+        }
+      }
       if (isPastLimit) {
         return false;
       }
@@ -237,6 +271,7 @@ export default function BrandWidget({ }: BrandWidgetProps) {
               src={item.url}
               alt={`Brand ${index}`}
               className="w-full h-full object-contain"
+              loading="eager"
             />
           );
         }
