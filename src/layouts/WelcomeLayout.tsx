@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import ClockWidget from '../components/widgets/ClockWidget';
-import WeatherWidget from '../components/widgets/WeatherWidget';
 import TickerWidget from '../components/widgets/TickerWidget';
 import BrandWidget from '../components/widgets/BrandWidget';
 import InspirationWidget from '../components/widgets/InspirationWidget';
@@ -54,10 +53,8 @@ export default function WelcomeLayout({ brandName, slogan }: WelcomeLayoutProps)
       {/* Main content */}
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <div className="w-[320px] bg-slate-900 p-6 flex flex-col items-center justify-start gap-6 h-full border-r border-slate-700">
+        <div className="w-[320px] bg-slate-900 p-6 pt-10 flex flex-col items-center justify-start gap-6 h-full border-r border-slate-700">
           <ClockWidget />
-          <div className="border-t border-white/15 w-full"></div>
-          <WeatherWidget />
         </div>
         {/* Brand */}
         <div className="flex-1 relative h-full w-full overflow-hidden bg-white flex items-center justify-center">

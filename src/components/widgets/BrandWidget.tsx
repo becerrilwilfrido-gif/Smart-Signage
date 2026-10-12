@@ -1,7 +1,6 @@
 // Digital Signage Carousel Widget - v1.0.2 (Added promotional images with 40s duration + Bosques weather & Waze traffic)
 import { useState, useEffect, useRef } from 'react';
 import TrafficSlide from './TrafficSlide';
-import WeatherSlide from './WeatherSlide';
 
 interface BrandWidgetProps {
   brandName: string;
@@ -109,7 +108,7 @@ export default function BrandWidget({ }: BrandWidgetProps) {
 
   const allMediaItems: Array<{
     url: string;
-    type: 'image' | 'video' | 'iframe' | 'traffic' | 'pdf' | 'weather';
+    type: 'image' | 'video' | 'iframe' | 'traffic' | 'pdf';
     duration?: number;
     allowedDays?: number[];
     exactDate?: string;
@@ -125,8 +124,6 @@ export default function BrandWidget({ }: BrandWidgetProps) {
     ...(isTrafficActive ? [
       { url: "traffic-bosques-auditorio", type: "traffic" as const, duration: 45000 }
     ] : []),
-    // Pronóstico del día y radar meteorológico en tiempo real (CDMX - Bosques de las Lomas)
-    { url: "weather-bosques-cdmx", type: "weather" as const, duration: 25000 },
     { url: "https://i.imgur.com/Ys1PFeA.png", type: "image" as const, duration: 40000 },
     { url: "https://i.imgur.com/At1A2Hn.png", type: "image" as const, duration: 40000 },
     { url: "https://i.imgur.com/vHjq23R.png", type: "image" as const, duration: 40000 },
@@ -135,7 +132,6 @@ export default function BrandWidget({ }: BrandWidgetProps) {
     { url: "https://i.imgur.com/CvmRort.jpeg", type: "image" as const, duration: 40000, validFrom: "2026-10-12", validUntil: "2026-10-31" },
     { url: "https://i.imgur.com/d1c0PNz.jpeg", type: "image" as const, duration: 40000, validFrom: "2026-10-12", validUntil: "2026-10-31" },
     { url: "https://i.imgur.com/rkO5Vyo.jpeg", type: "image" as const, duration: 40000, validFrom: "2026-10-12", validUntil: "2026-10-31" },
-    { url: "https://i.imgur.com/CENcd2M.mp4", type: "video" as const },
     { url: "https://i.imgur.com/0rI0Sl2.mp4", type: "video" as const },
     { url: "https://smartlearning.business/public/ranking", type: "iframe" as const, duration: 20000 } // Ranking (20 seg)
   ];
@@ -209,7 +205,7 @@ export default function BrandWidget({ }: BrandWidgetProps) {
     const currentItem = mediaItems[currentIndex];
     if (!currentItem) return;
 
-    if (currentItem.type === 'image' || currentItem.type === 'iframe' || currentItem.type === 'traffic' || currentItem.type === 'pdf' || currentItem.type === 'weather') {
+    if (currentItem.type === 'image' || currentItem.type === 'iframe' || currentItem.type === 'traffic' || currentItem.type === 'pdf') {
       const duration = currentItem.duration || (currentItem.type === 'image' ? 8000 : 20000);
       const timer = setTimeout(() => {
         handleNext();
@@ -265,8 +261,6 @@ export default function BrandWidget({ }: BrandWidgetProps) {
           slideElement = <ScaledIframe url={item.url} isCurrent={isCurrent} />;
         } else if (item.type === 'pdf') {
           slideElement = <PdfSlide url={item.url} isCurrent={isCurrent} />;
-        } else if (item.type === 'weather') {
-          slideElement = <WeatherSlide isCurrent={isCurrent} />;
         } else {
           slideElement = (
             <img
