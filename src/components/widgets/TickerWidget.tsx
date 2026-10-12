@@ -9,13 +9,13 @@ export default function TickerWidget() {
         transition={{
           repeat: Infinity,
           repeatType: 'loop',
-          duration: 18,
+          duration: 26,
           ease: 'linear',
         }}
         className="inline-block whitespace-nowrap absolute left-0"
       >
         <span className="text-2xl lg:text-3xl font-bold tracking-wide">
-          Bienvenido a BSD
+          ¡Bienvenidos a BSD SmartPayroll! &nbsp;•&nbsp; Donde tu talento nos impulsa a crecer juntos.
         </span>
       </motion.div>
     </div>

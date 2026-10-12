@@ -127,11 +127,14 @@ export default function BrandWidget({ }: BrandWidgetProps) {
     ] : []),
     // Pronóstico del día y radar meteorológico en tiempo real (CDMX - Bosques de las Lomas)
     { url: "weather-bosques-cdmx", type: "weather" as const, duration: 25000 },
-    { url: "https://files.constantcontact.com/b0467007601/479bc953-68be-4615-a6db-286892fe3e95.pdf", type: "pdf" as const, duration: 20000, validUntil: "2026-10-31" },
     { url: "https://i.imgur.com/Ys1PFeA.png", type: "image" as const, duration: 40000 },
     { url: "https://i.imgur.com/At1A2Hn.png", type: "image" as const, duration: 40000 },
     { url: "https://i.imgur.com/vHjq23R.png", type: "image" as const, duration: 40000 },
     { url: "https://i.imgur.com/zBd63pb.png", type: "image" as const, duration: 40000, validFrom: "2026-10-12", validUntil: "2026-10-30" },
+    { url: "https://i.imgur.com/uKNRkZc.png", type: "image" as const, duration: 40000, validFrom: "2026-10-12", validUntil: "2026-10-17" },
+    { url: "https://i.imgur.com/CvmRort.jpeg", type: "image" as const, duration: 40000, validFrom: "2026-10-12", validUntil: "2026-10-31" },
+    { url: "https://i.imgur.com/d1c0PNz.jpeg", type: "image" as const, duration: 40000, validFrom: "2026-10-12", validUntil: "2026-10-31" },
+    { url: "https://i.imgur.com/rkO5Vyo.jpeg", type: "image" as const, duration: 40000, validFrom: "2026-10-12", validUntil: "2026-10-31" },
     { url: "https://i.imgur.com/CENcd2M.mp4", type: "video" as const },
     { url: "https://i.imgur.com/0rI0Sl2.mp4", type: "video" as const },
     { url: "https://smartlearning.business/public/ranking", type: "iframe" as const, duration: 20000 } // Ranking (20 seg)
